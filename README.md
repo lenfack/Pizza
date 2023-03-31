@@ -1,70 +1,77 @@
-# Getting Started with Create React App
+react:
+useState() - хранение и изменение стейта
+useEffect(() => {}) - действие при первой отрисовки компонента
+useRef() - хранение ссылок (на элемент)
+useCallback() - убирает доп вызов ф-ии
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+{ BrowserRouter } => { Routes, Route } <Route path="/" element={<Home />} /> => { Link } => <Link to="/"> - для перехода по страниццам - ссылкам, все компоненты нужно обернуть в Routes
 
-## Available Scripts
+{ createContext } => помещаем в переменную AppContext => <AppContext.Provider value={{}}> => { useContex } => useContext(AppContext) - пропсы достаются во всех обернутых в AppContext.Provider компонентах
 
-In the project directory, you can run:
 
-### `npm start`
+redux:
+{ Provider } => создаем папку redux в ней store.js и второй Slice.js.
+оборочиваем все приложение в <Provider store={store}>
+в store.js : 
+import { configureStore } from '@reduxjs/toolkit';
+import filterSlice from './slice/filterSlice'; импортируем второй созданый  файл
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+export const store = configureStore({
+   reducer: {
+      filterSlice, имя переменной в кот. помещаем createSlice ф-ию во втором файле
+   },
+});
+ в Slice.js:
+   import { createSlice } from "@reduxjs/toolkit";
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+   const initialState = {
+      categoryType: 0,
+      sortType: {
+         name: 'популярности',
+         sort: 'rating',
+      }
+   }
 
-### `npm test`
+   export const filterSlice = createSlice({
+      name: "filter",
+      initialState,
+      reducers: { это наши action'ы
+         setCategoryType(state, action) {
+            state.categoryType = action.payload;
+         },
+         setSortType(state, action) {
+            state.sortType = action.payload;
+         },
+      },
+   });
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   export const {setCategoryType, setSortType} = filterSlice.actions
 
-### `npm run build`
+   export default filterSlice.reducer
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+импортируем => 
+import { useSelector, useDispatch } from 'react-redux';
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+useSelector - типо тейта => помещаем в переменную const 'название переменной' = useSelector((state) => state.filterSlice.categoryType - название стейта из initialState)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+useDispatch - типо сетстейта => помещаем в переменную хук const dispatch = useDispatch()
 
-### `npm run eject`
+и action который нам нужен =>
+import { setCategoryType } from '../redux/slice/filterSlice';
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+lodesh: (библиотека с кучей методов)
+Выполнение запроса через определенное время чтоб не отправлять постоянные запросы во время набора текста в поисковой строке (Debounce - отложеная ф-ия)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+npm install lodash.debounce =>
+import debounce from 'lodash.debounce';
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+npm install qs
+библиотека qs благодаря ей можно парсить параметры или сгенерировать, чтоб при перезагрузке страници, оставаться на той же вкладке
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+библиотека clsx - несколько строчек соединяет в одну, для кнопки в корзине чтоб она дизейблилась когда у нас остается один товар
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+lazy - ленивая подгрузка
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+<Suspense fallback={<div>Идет загрузка ...</div>}> - что показывать пока грузится
